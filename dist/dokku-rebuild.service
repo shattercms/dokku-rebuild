@@ -1,0 +1,22 @@
+[Unit]
+Description=dokku-rebuild
+Documentation=https://github.com/shattercms/dokku-rebuild
+
+[Service]
+Type=simple
+User=dokku
+Group=dokku
+Environment=SOCKET_PATH=/var/run/dokku-rebuild/dokku-rebuild.sock
+
+# Edit app name
+Environment=APP_NAME=<your app name>
+
+ExecStartPre=+/bin/mkdir -p -m 0777 /var/run/dokku-rebuild
+ExecStartPre=+/bin/chown dokku:dokku /var/run/dokku-rebuild
+ExecStart=/usr/bin/node /usr/bin/dokku-rebuild.js
+ExecStartPost=/bin/sleep 3
+ExecStartPost=+/bin/chmod 0777 /var/run/dokku-rebuild/dokku-rebuild.sock
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
